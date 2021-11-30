@@ -7,22 +7,25 @@
     android:layout_marginTop="10dp"
     android:layout_marginEnd="20dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="8dp">
+    app:cardElevation="8dp"
+    android:backgroundTint="@color/design_default_color_primary"
+    >
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="8dp"
+        >
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/ic_cat"
-            app:tint="?android:textColorPrimary" />
+            android:src="@drawable/ic_food"
+            app:tint="?android:textColorPrimaryInverse" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,16 +42,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/tvName"
-                    android:text="@string/name" />
+                    android:text="@string/name"
+                    android:textColor="?android:textColorPrimaryInverse"
+                    />
 
                 <TextView
                     android:id="@+id/tvName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@string/cat_name"
+                    android:text="@string/food_name"
                     android:textAllCaps="true"
                     android:textStyle="bold"
+                    android:textColor="?android:textColorPrimaryInverse"
                     />
             </LinearLayout>
 
@@ -61,15 +67,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tvAge"
-                    android:text="@string/age" />
+                    android:labelFor="@+id/tvPrice"
+                    android:text="@string/price"
+                    android:textColor="?android:textColorPrimaryInverse"
+                    />
 
                 <TextView
-                    android:id="@+id/tvAge"
+                    android:id="@+id/tvPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@string/cat_age" />
+                    android:text="@string/food_price"
+                    android:textColor="?android:textColorPrimaryInverse"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -81,16 +91,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tvOrigin"
-                    android:text="@string/origin" />
+                    android:labelFor="@+id/tvManufacturer"
+                    android:text="@string/manufacturer"
+                    android:textColor="?android:textColorPrimaryInverse"
+                    />
 
                 <TextView
-                    android:id="@+id/tvOrigin"
+                    android:id="@+id/tvManufacturer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@string/cat_origin" />
+                    android:text="@string/manufacturer_name"
+                    android:textColor="?android:textColorPrimaryInverse"
+                    />
             </LinearLayout>
+
 
 
         </LinearLayout>

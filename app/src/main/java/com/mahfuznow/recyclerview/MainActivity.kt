@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapter
 import com.mahfuznow.recyclerview.adapter.CatListAdapter
 import com.mahfuznow.recyclerview.model.Cat
+import com.mahfuznow.recyclerview.model.Food
 import java.util.*
+import java.util.Collections.addAll
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +20,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val catList = getDummyCatList()
-        val adapter = CatListAdapter(this,catList)
+        val foodList = getDummyFoodList()
+
+        val mergedList: ArrayList<Any> = mergeList(catList,foodList)
+        mergedList.shuffle()
+
+        val adapter = CatAndFoodListAdapter(this,mergedList)
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
@@ -38,5 +46,22 @@ class MainActivity : AppCompatActivity() {
             catList.add(cat)
         }
         return catList
+    }
+
+    private fun getDummyFoodList(): ArrayList<Food> {
+        val foodList : ArrayList<Food> = ArrayList()
+        for(i in 1..10) {
+            val price = (200..1000).random().toDouble()
+            val food = Food("Food Name $i",price, "Manufacturer")
+            foodList.add(food)
+        }
+        return foodList
+    }
+
+    private fun mergeList(list1: ArrayList<Cat>, list2: ArrayList<Food>): ArrayList<Any> {
+        val mergedList:ArrayList<Any> = ArrayList()
+        mergedList.addAll(list1)
+        mergedList.addAll(list2)
+        return  mergedList
     }
 }

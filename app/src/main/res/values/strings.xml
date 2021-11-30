@@ -6,4 +6,10 @@
     <string name="origin">Origin:</string>
     <string name="cat_age">Cat Age</string>
     <string name="age">Age:</string>
+    <string name="manufacturer">Manufacturer</string>
+    <string name="food_name">Food Name</string>
+    <string name="manufacturer_name">Manufacturer Name</string>
+    <string name="price">Price:</string>
+    <string name="food_price">Food Price</string>
+    <string name="advertisement">Advertisement</string>
 </resources>
