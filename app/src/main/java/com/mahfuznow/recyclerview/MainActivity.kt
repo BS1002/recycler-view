@@ -4,13 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapter
 import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapterDelegate
-import com.mahfuznow.recyclerview.adapter.CatListAdapter
 import com.mahfuznow.recyclerview.model.Cat
 import com.mahfuznow.recyclerview.model.Food
 import java.util.*
-import java.util.Collections.addAll
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -26,7 +23,9 @@ class MainActivity : AppCompatActivity() {
         val mergedList: ArrayList<Any> = mergeList(catList,foodList)
         mergedList.shuffle()
 
-        val adapter = CatAndFoodListAdapterDelegate(this,mergedList)
+        val adapter = CatAndFoodListAdapterDelegate(this)
+        //items is a field defined in super class of the adapter
+        adapter.items = mergedList
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
