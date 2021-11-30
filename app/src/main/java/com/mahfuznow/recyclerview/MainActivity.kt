@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapter
+import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapterDelegate
 import com.mahfuznow.recyclerview.adapter.CatListAdapter
 import com.mahfuznow.recyclerview.model.Cat
 import com.mahfuznow.recyclerview.model.Food
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         val mergedList: ArrayList<Any> = mergeList(catList,foodList)
         mergedList.shuffle()
 
-        val adapter = CatAndFoodListAdapter(this,mergedList)
+        val adapter = CatAndFoodListAdapterDelegate(this,mergedList)
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
