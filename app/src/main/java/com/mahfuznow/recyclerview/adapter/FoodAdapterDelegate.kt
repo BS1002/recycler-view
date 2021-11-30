@@ -7,18 +7,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.model.Food
 
-class FoodAdapterDelegate(private val context: Context, val viewType: Int) {
+class FoodAdapterDelegate(private val context: Context) :
+    AdapterDelegate<ArrayList<Any>>() {
 
-    fun isForViewType(items: List<Any>, position: Int) = items[position] is Food
+    public override fun isForViewType(items: ArrayList<Any>, position: Int) = items[position] is Food
 
-    fun onCreateViewHolder(parent: ViewGroup) =
-        FoodViewHolder(LayoutInflater.from(context).inflate(R.layout.item_food, parent, false))
+    public override fun onCreateViewHolder(parent: ViewGroup) =
+        FoodViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_food, parent, false))
 
-    fun onBindViewHolder(foods: List<Any>, position: Int, holder: RecyclerView.ViewHolder) {
-        val food = foods[position]
+    public override fun onBindViewHolder(
+        items: ArrayList<Any>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
+        val food = items[position]
         food as Food
         holder as FoodViewHolder
         holder.tvName.text = food.name

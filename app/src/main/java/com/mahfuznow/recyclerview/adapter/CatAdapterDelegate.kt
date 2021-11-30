@@ -7,18 +7,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.model.Cat
 
-class CatAdapterDelegate(private val context: Context, val viewType: Int) {
+class CatAdapterDelegate(private val context: Context) :
+    AdapterDelegate<ArrayList<Any>>() {
 
-    fun isForViewType(items: List<Any>, position: Int) = items[position] is Cat
+    public override fun isForViewType(items: ArrayList<Any>, position: Int) = items[position] is Cat
 
-    fun onCreateViewHolder(parent: ViewGroup) =
-        CatViewHolder(LayoutInflater.from(context).inflate(R.layout.item_cat, parent, false))
+    public override fun onCreateViewHolder(parent: ViewGroup) =
+        CatViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_cat, parent, false))
 
-    fun onBindViewHolder(cats: List<Any>, position: Int, holder: RecyclerView.ViewHolder) {
-        val cat = cats[position]
+    public override fun onBindViewHolder(
+        items: ArrayList<Any>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
+        val cat = items[position]
         cat as Cat
         holder as CatViewHolder
         holder.tvName.text = cat.name
@@ -35,5 +42,4 @@ class CatAdapterDelegate(private val context: Context, val viewType: Int) {
         val tvAge: TextView = itemView.findViewById(R.id.tvAge)
         val tvOrigin: TextView = itemView.findViewById(R.id.tvOrigin)
     }
-
 }

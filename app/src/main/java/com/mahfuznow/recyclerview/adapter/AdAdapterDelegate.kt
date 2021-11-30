@@ -6,18 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.model.Ad
 
-class AdAdapterDelegate(private val context: Context, val viewType: Int) {
+class AdAdapterDelegate(private val context: Context) :
+    AdapterDelegate<ArrayList<Any>>() {
 
-    fun isForViewType(items: List<Any>, position: Int) = items[position] is Ad
+    override fun isForViewType(items: ArrayList<Any>, position: Int) = items[position] is Ad
 
-    fun onCreateViewHolder(parent: ViewGroup) =
-        AdViewHolder(LayoutInflater.from(context).inflate(R.layout.item_ad, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup) =
+        AdViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_ad, parent, false))
 
-    fun onBindViewHolder(ads: List<Any>, position: Int, holder: RecyclerView.ViewHolder) {
-        val ad = ads[position]
+    override fun onBindViewHolder(
+        items: ArrayList<Any>,
+        position: Int,
+        holder: RecyclerView.ViewHolder,
+        payloads: MutableList<Any>
+    ) {
+        val ad = items[position]
         ad as Ad
         holder as AdViewHolder
     }
