@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Recycler View</string>
+    <string name="name">Name:</string>
+    <string name="cat_name">Cat Name</string>
+    <string name="cat_origin">Cat Origin</string>
+    <string name="origin">Origin:</string>
+    <string name="cat_age">Cat Age</string>
+    <string name="age">Age:</string>
 </resources>
