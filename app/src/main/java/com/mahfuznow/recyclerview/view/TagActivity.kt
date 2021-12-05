@@ -2,10 +2,15 @@ package com.mahfuznow.recyclerview.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.core.math.MathUtils
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.adapter.TagListAdapter
 import com.mahfuznow.recyclerview.model.Tag
+import com.mahfuznow.recyclerview.utils.utils
+import java.math.MathContext
 
 class TagActivity : AppCompatActivity() {
 
@@ -19,10 +24,19 @@ class TagActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
-        //Layout manager can either declared in XML or Programmatically
-        //recyclerView.layoutManager = GridLayoutManager(this, 3)
+
+        val layoutManager = GridLayoutManager(this, 3) // spanCount represents number of columns
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                //position -> current item position -> (0 - items.size)
+                //return if (position % 5 == 0) 2 else 1 // each 5th item will take up the width of 2 cells
+                return if (position % 4 == 0) 3 else 1 // each 4th item will take up the width of 4 cells
+            }
+        }
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
     }
+
 
     private fun getDummyTagList(): List<Tag> {
         return arrayListOf(
