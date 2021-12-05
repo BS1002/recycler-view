@@ -1,9 +1,10 @@
-package com.mahfuznow.recyclerview
+package com.mahfuznow.recyclerview.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.adapter.CatAndFoodListAdapterDelegate
 import com.mahfuznow.recyclerview.model.Cat
 import com.mahfuznow.recyclerview.model.Food
