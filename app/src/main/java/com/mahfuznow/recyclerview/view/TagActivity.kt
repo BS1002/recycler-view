@@ -2,15 +2,12 @@ package com.mahfuznow.recyclerview.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.core.math.MathUtils
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.adapter.TagListAdapter
 import com.mahfuznow.recyclerview.model.Tag
 import com.mahfuznow.recyclerview.utils.utils
-import java.math.MathContext
 
 class TagActivity : AppCompatActivity() {
 
@@ -25,12 +22,27 @@ class TagActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
 
-        val layoutManager = GridLayoutManager(this, 3) // spanCount represents number of columns
+        // X and Y are representing a pattern, 1st row will have X items and 2nd row will have Y items. Only change these two values to generate new pattern
+        val x = 2
+        val y = 3
+        val lcm = utils.lcm(x,y)
+        val d = x+y
+
+        /*
+        000111
+        223344
+        555666
+        778899
+        */
+
+        val layoutManager = GridLayoutManager(this, lcm) // spanCount represents number of columns
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            //returns how much width(number of cells) each list items will take
             override fun getSpanSize(position: Int): Int {
-                //position -> current item position -> (0 - items.size)
-                //return if (position % 5 == 0) 2 else 1 // each 5th item will take up the width of 2 cells
-                return if (position % 4 == 0) 3 else 1 // each 4th item will take up the width of 4 cells
+                val remainder = position % d
+                for(i in 0 until x)
+                    if(remainder==i) return lcm/x //return spanSize = 3 for 0,1,5,6,11,12... positions
+                return lcm/y //return spanSize = 2 for rest of the positions
             }
         }
         recyclerView.layoutManager = layoutManager
