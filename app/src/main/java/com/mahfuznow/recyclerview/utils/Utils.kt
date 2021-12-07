@@ -1,6 +1,6 @@
 package com.mahfuznow.recyclerview.utils
 
-class utils {
+class Utils {
 
     companion object {
         fun gcd(x: Int, y: Int): Int {
