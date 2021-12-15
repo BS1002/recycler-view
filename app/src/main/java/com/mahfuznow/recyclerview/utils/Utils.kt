@@ -1,5 +1,9 @@
 package com.mahfuznow.recyclerview.utils
 
+import android.content.Context
+import android.util.TypedValue
+
+
 class Utils {
 
     companion object {
@@ -16,6 +20,14 @@ class Utils {
 
         fun lcm(x: Int, y: Int): Int {
             return (x * y) / gcd(x, y)
+        }
+
+        fun pxFromDp(context: Context, dp: Int): Int {
+            return TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp.toFloat(),
+                context.resources.displayMetrics
+            ).toInt()
         }
     }
 
