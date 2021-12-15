@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.mahfuznow.recyclerview.R
 import com.mahfuznow.recyclerview.adapter.TagListAdapter
 import com.mahfuznow.recyclerview.manager.PatternedGridLayoutManager
@@ -22,7 +23,7 @@ class TagActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = PatternedGridLayoutManager(this,2,3)
+        recyclerView.layoutManager = FlexboxLayoutManager(this)
         recyclerView.adapter = adapter
     }
 
