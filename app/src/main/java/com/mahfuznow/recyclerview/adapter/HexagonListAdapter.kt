@@ -52,24 +52,40 @@ class HexagonListAdapter(
             textView.setOnClickListener {
                 isSelected = !isSelected
                 if (isSelected) {
-                    textView.background = ContextCompat.getDrawable(context,R.drawable.hexagon_filled)
+                    textView.background =
+                        ContextCompat.getDrawable(context, R.drawable.hexagon_filled)
                     textView.setTextColor(textColorSelected)
                 } else {
-                    textView.background = ContextCompat.getDrawable(context,R.drawable.hexagon_outline)
+                    textView.background =
+                        ContextCompat.getDrawable(context, R.drawable.hexagon_outline)
                     textView.setTextColor(textColor)
                 }
             }
 
             //adjusting the hexagon spacing & gravity
-            // this will only work if x=3 & y=2
+            // this will only work if x=4 & y=3
             val param = linearLayout.layoutParams as GridLayoutManager.LayoutParams
             val negativeMargin = Utils.pxFromDp(context, -18)
-            if (position >= x) param.topMargin = negativeMargin // pulling up every rows except the first row
+            // pulling up every rows except the first row
+            if (position >= x) param.topMargin = negativeMargin
             val d = x + y
-            when (position % d) {
-                //rows that contains 2 items
-                3 -> linearLayout.gravity = Gravity.END // 1st item in the row
-                4 -> linearLayout.gravity = Gravity.START // 2nd item in the row
+            val rem = position % d
+            if (rem >= x) {
+                // Dealing with the 2nd, 4th, 6th .... 2nth rows
+                val index = rem - x // index of the hexagon in the current row
+                when (index) {
+                    0-> {
+                        linearLayout.gravity = Gravity.END
+                        param.rightMargin = negativeMargin
+                    }
+                    1 -> {
+                        linearLayout.gravity = Gravity.CENTER
+                    }
+                    2 -> {
+                        linearLayout.gravity = Gravity.START
+                        param.leftMargin = negativeMargin
+                    }
+                }
             }
 
         }

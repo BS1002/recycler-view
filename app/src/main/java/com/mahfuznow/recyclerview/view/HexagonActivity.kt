@@ -17,11 +17,11 @@ class HexagonActivity : AppCompatActivity() {
 
         val hexagons: List<Hexagon> = getDummyHexagonList()
 
-        val adapter = HexagonListAdapter(this, hexagons, 3, 2) //X and Y are representing a pattern, 1st row will have X items and 2nd row will have Y items.
+        val adapter = HexagonListAdapter(this, hexagons, 4, 3) //X and Y are representing a pattern, 1st row will have X items and 2nd row will have Y items.
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
         recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = PatternedGridLayoutManager(this,3,2) //X and Y are representing a pattern, 1st row will have X items and 2nd row will have Y items.
+        recyclerView.layoutManager = PatternedGridLayoutManager(this,4,3) //X and Y are representing a pattern, 1st row will have X items and 2nd row will have Y items.
         recyclerView.adapter = adapter
     }
 
