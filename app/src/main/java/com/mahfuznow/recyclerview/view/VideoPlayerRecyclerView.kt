@@ -57,6 +57,7 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
     private var screenDefaultHeight = 0
     private var playPosition = -1
     private var isVideoViewAdded = false
+    private var lastPlayedVideoIndex: Int? = null
 
     // Initial Volume state is ON
     private var volumeState: VolumeState = VolumeState.ON
@@ -88,7 +89,7 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         // Bind the player to the view.
         playerView.player = videoPlayer
         // Setting weather to show Video Controller UI (seekbar, play-pause, next, forward... etc.)
-        playerView.useController = false
+        playerView.useController = true
 
 
         //Listeners for RecyclerView
@@ -99,6 +100,11 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
                 if (newState == SCROLL_STATE_IDLE) {
                     // show the old thumbnail if it's not null
                     thumbnail?.visibility = VISIBLE
+
+                    //save old video's SeekPosition
+                    if (lastPlayedVideoIndex != null) {
+                        saveVideoSeekPosition(lastPlayedVideoIndex!!)
+                    }
 
                     // There's a special case when the end of the list has been reached.
                     // Need to handle that with this bit of logic
@@ -161,6 +167,11 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
 
 
     fun playVideo(isEndOfList: Boolean) {
+
+        // remove any old player views from previously playing videos
+        playerView.visibility = INVISIBLE
+        removeVideoView(playerView)
+
         val targetPosition: Int
         if (!isEndOfList) {
             //finding the target position on which video should be played
@@ -199,10 +210,6 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         // set the position of the list-item that is to be played
         playPosition = targetPosition
 
-        // remove any old player views from previously playing videos
-        playerView.visibility = INVISIBLE
-        removeVideoView(playerView)
-
         //Finding the view holder at the targeted position
         // IMPORTANT: In the ViewHolder class tag must be provided (itemView.tag = this)
         val currentPosition = targetPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
@@ -213,21 +220,32 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         volumeControl = holder.volumeControl
         viewHolderParent = holder.itemView
         frameLayout = holder.frameLayout
-        playerView.player = videoPlayer
 
         //Handling onClick Event in the video item
         viewHolderParent?.setOnClickListener {
             toggleVolume()
         }
 
+        //Setting the new video
+        val video = videos[targetPosition]
+        val url = video.url
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "AppName"))
-        val mediaUrl = videos[targetPosition].url
-        val videoSource: MediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
-            .createMediaSource(Uri.parse(mediaUrl))
+        val videoSource: MediaSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url))
         videoPlayer.prepare(videoSource)
+
+        //If video was played previously, start playing from that seekPosition
+        val storedSeekPosition = video.seekPosition
+        if (storedSeekPosition != null) {
+            videoPlayer.seekTo(storedSeekPosition)
+        }
+
+        playerView.player = videoPlayer
         videoPlayer.playWhenReady = true
 
         thumbnail?.visibility = INVISIBLE
+
+        //saving index of last played video
+        lastPlayedVideoIndex = targetPosition
     }
 
 
@@ -271,6 +289,10 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         playerView.visibility = VISIBLE
         playerView.alpha = 1f
         thumbnail?.visibility = GONE
+    }
+
+    private fun saveVideoSeekPosition(index: Int) {
+        videos[index].seekPosition = videoPlayer.currentPosition
     }
 
     private fun resetVideoView() {
