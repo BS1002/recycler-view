@@ -3,13 +3,21 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable-v24/ic_volume_off_grey_24dp.xml" value="0.1" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable-v24/ic_volume_up_grey_24dp.xml" value="0.1" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/hexagon.xml" value="0.2537037037037037" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/hexagon_outline.xml" value="0.2537037037037037" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_a.xml" value="0.2911458333333333" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_cat.xml" value="0.2851851851851852" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_volume_off.xml" value="0.2911458333333333" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_volume_off_grey_24dp.xml" value="0.1" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_volume_on.xml" value="0.2911458333333333" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/ic_volume_up_grey_24dp.xml" value="0.2537037037037037" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/drawable/shape_rounded_corner.xml" value="0.2657407407407407" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/activity_hexagon.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/activity_main.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/activity_tag.xml" value="0.275" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/activity_video.xml" value="0.1" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_ad.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_cat.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_dog.xml" value="0.275" />
@@ -17,6 +25,8 @@
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_hexagon.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_tag.xml" value="0.275" />
         <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_tag_hexagon.xml" value="0.275" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/item_video.xml" value="0.264" />
+        <entry key="..\:/GitHub/GitHub-BS1002/recyclerview/app/src/main/res/layout/layout_video_list_item.xml" value="0.275" />
       </map>
     </option>
   </component>

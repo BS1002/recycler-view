@@ -33,6 +33,10 @@ android {
 
 dependencies {
 
+    def flexBoxVersion = "3.0.0"
+    def exoPlayerVersion = "2.8.4"
+    def glideVersion = "4.12.0"
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
@@ -45,5 +49,12 @@ dependencies {
     implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.1'
 
     // FlexBox for tag activity
-    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation "com.google.android.flexbox:flexbox:$flexBoxVersion"
+
+    // ExoPlayer
+    implementation "com.google.android.exoplayer:exoplayer:$exoPlayerVersion"
+
+    // Glide
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 }

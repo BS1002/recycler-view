@@ -13,4 +13,6 @@
     <string name="food_price">Food Price</string>
     <string name="advertisement">Advertisement</string>
     <string name="android">Android</string>
+    <string name="title">This is the title</string>
+    <string name="description">This is the description</string>
 </resources>
