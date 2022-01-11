@@ -12,6 +12,6 @@ class CatAndFoodListAdapterDelegate(
         // ViewType integer is assigned internally by delegatesManager
         delegatesManager.addDelegate(CatAdapterDelegate(context))
         delegatesManager.addDelegate(FoodAdapterDelegate(context))
-        delegatesManager.addDelegate(AdAdapterDelegate(context))
+        delegatesManager.addDelegate(AdAdapterDelegate())
     }
 }
