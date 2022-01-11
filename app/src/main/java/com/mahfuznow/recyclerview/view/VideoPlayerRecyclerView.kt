@@ -1,13 +1,11 @@
 package com.mahfuznow.recyclerview.view
 
 import android.content.Context
-import android.graphics.Point
 import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -26,7 +24,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import com.mahfuznow.recyclerview.adapter.VideoListAdapter
+import com.mahfuznow.recyclerview.adapter.VideoAdapterDelegate
 import com.mahfuznow.recyclerview.model.Video
 import java.util.ArrayList
 
@@ -48,13 +46,11 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
     private var frameLayout: FrameLayout? = null
 
     //Exoplayer
-    private var playerView: PlayerView
+    private var playerView: PlayerView = PlayerView(context)
     private var videoPlayer: SimpleExoPlayer
 
     // vars
-    private var videos: List<Video> = ArrayList<Video>()
-    private var videoSurfaceDefaultHeight = 0
-    private var screenDefaultHeight = 0
+    private var listItems: List<Any> = ArrayList<Any>()
     private var playPosition = -1
     private var isVideoViewAdded = false
     private var lastPlayedVideoIndex: Int? = null
@@ -63,44 +59,32 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
     private var volumeState: VolumeState = VolumeState.ON
 
     //Video list must be provided to this class
-    fun setVideoList(videos: List<Video>) {
-        this.videos = videos
+    fun setListItems(items: List<Any>) {
+        this.listItems = items
     }
 
     init {
-        // getting the display measures
-        // Screen Height = Device height, Video Height = Device Width
-        // This is required to determine which video is taking the maximum area in the display (targeted video)
-        val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        val point = Point()
-        display.getSize(point)
-        videoSurfaceDefaultHeight = point.x
-        screenDefaultHeight = point.y
 
-        // Setting up the playerView
-        playerView = PlayerView(context)
-        playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         val bandwidthMeter: BandwidthMeter = DefaultBandwidthMeter()
         val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector: TrackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
-
         // Create the player
         videoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
+
+        // Setting up the playerView
+        playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
         // Bind the player to the view.
         playerView.player = videoPlayer
         // Setting weather to show Video Controller UI (seekbar, play-pause, next, forward... etc.)
         playerView.useController = true
 
 
-        //Listeners for RecyclerView
+        //Listeners for RecyclerView Scrolling
         addOnScrollListener(object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 //We must wait until the scrolling finishes (in idle state), otherwise it causes crash
                 if (newState == SCROLL_STATE_IDLE) {
-                    // show the old thumbnail if it's not null
-                    thumbnail?.visibility = VISIBLE
-
                     //save old video's SeekPosition
                     if (lastPlayedVideoIndex != null) {
                         saveVideoSeekPosition(lastPlayedVideoIndex!!)
@@ -117,16 +101,6 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
             }
 
         })
-        addOnChildAttachStateChangeListener(object : OnChildAttachStateChangeListener {
-            override fun onChildViewAttachedToWindow(view: View) {}
-
-            //remove the playerView as soon as the item is scrolled away from the visible area(detached)
-            override fun onChildViewDetachedFromWindow(view: View) {
-                if (viewHolderParent != null && viewHolderParent == view) {
-                    resetVideoView()
-                }
-            }
-        })
 
         //Listener for the videoPlayer
         videoPlayer.addListener(object : Player.EventListener {
@@ -134,10 +108,13 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
                         Log.e(TAG, "onPlayerStateChanged: Buffering video.")
+                        //show circular progressbar
                         progressBar?.visibility = VISIBLE
+                        progressBar?.bringToFront()
                     }
                     Player.STATE_ENDED -> {
                         Log.d(TAG, "onPlayerStateChanged: Video ended.")
+                        //replay
                         videoPlayer.seekTo(0)
                     }
                     Player.STATE_IDLE -> {}
@@ -168,36 +145,24 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
 
     fun playVideo(isEndOfList: Boolean) {
 
-        // remove any old player views from previously playing videos
-        playerView.visibility = INVISIBLE
-        removeVideoView(playerView)
-
-        val targetPosition: Int
+        //finding the target position of the video which should be played
+        val firstCompletelyVisibleItemPosition = (layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+        val lastCompletelyVisibleItemPosition = (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+        var targetPosition = 0
         if (!isEndOfList) {
-            //finding the target position on which video should be played
-            val startPosition = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            var endPosition = (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-
-            // if there is more than 2 list-items on the screen, set the difference to be 1
-            if (endPosition - startPosition > 1) {
-                endPosition = startPosition + 1
-            }
-
-            // something is wrong. return.
-            if (startPosition < 0 || endPosition < 0) {
-                return
-            }
-
-            // if there is more than 1 list-item on the screen
-            targetPosition = if (startPosition != endPosition) {
-                val startPositionVideoHeight = getVisibleVideoSurfaceHeight(startPosition)
-                val endPositionVideoHeight = getVisibleVideoSurfaceHeight(endPosition)
-                if (startPositionVideoHeight > endPositionVideoHeight) startPosition else endPosition
-            } else {
-                startPosition
+            for (i in firstCompletelyVisibleItemPosition..lastCompletelyVisibleItemPosition) {
+                if (listItems[i] is Video) {
+                    targetPosition = i
+                    break
+                }
             }
         } else {
-            targetPosition = videos.size - 1
+            for (i in (listItems.size - 1) downTo firstCompletelyVisibleItemPosition) {
+                if (listItems[i] is Video) {
+                    targetPosition = i
+                    break
+                }
+            }
         }
 
         Log.d(TAG, "playVideo: target position: $targetPosition")
@@ -210,63 +175,62 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         // set the position of the list-item that is to be played
         playPosition = targetPosition
 
-        //Finding the view holder at the targeted position
-        // IMPORTANT: In the ViewHolder class tag must be provided (itemView.tag = this)
-        val currentPosition = targetPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-        val child = getChildAt(currentPosition)
-        val holder = child.tag as VideoListAdapter.VideoViewHolder
-        thumbnail = holder.thumbnail
-        progressBar = holder.progressBar
-        volumeControl = holder.volumeControl
-        viewHolderParent = holder.itemView
-        frameLayout = holder.frameLayout
-
-        //Handling onClick Event in the video item
-        viewHolderParent?.setOnClickListener {
-            toggleVolume()
-        }
-
-        //Setting the new video
-        val video = videos[targetPosition]
-        val url = video.url
-        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "AppName"))
-        val videoSource: MediaSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url))
-        videoPlayer.prepare(videoSource)
-
-        //If video was played previously, start playing from that seekPosition
-        val storedSeekPosition = video.seekPosition
-        if (storedSeekPosition != null) {
-            videoPlayer.seekTo(storedSeekPosition)
-        }
-
-        playerView.player = videoPlayer
-        videoPlayer.playWhenReady = true
-
-        thumbnail?.visibility = INVISIBLE
-
-        //saving index of last played video
-        lastPlayedVideoIndex = targetPosition
-    }
+        // remove previously playing video's player views,progressbar and restore that's thumbnail
+        removeVideoView(playerView)
+        progressBar?.visibility = View.GONE
+        playerView.visibility = View.GONE
+        thumbnail?.visibility = View.VISIBLE
 
 
-    /*
-     * Returns the visible region of the video surface on the screen.
-     * if some is cut off, it will return less than the @videoSurfaceDefaultHeight
-     * @param playPosition
-     * @return
-     */
-    private fun getVisibleVideoSurfaceHeight(playPosition: Int): Int {
-        val at = playPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-        Log.d(TAG, "getVisibleVideoSurfaceHeight: at: $at")
-        val child = getChildAt(at) ?: return 0
-        val location = IntArray(2)
-        child.getLocationInWindow(location)
-        return if (location[1] < 0) {
-            location[1] + videoSurfaceDefaultHeight
-        } else {
-            screenDefaultHeight - location[1]
+        if (listItems[targetPosition] is Video) {
+            //Finding the view holder of this position
+            // IMPORTANT: In the ViewHolder class tag must be provided (itemView.tag = this)
+            var positionInVisibleScreen = targetPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            Log.d(TAG, "playVideo: positionInVisibleScreen: $positionInVisibleScreen")
+            //This is a safety check to prevent crash for negative position
+            if(positionInVisibleScreen < 0)
+                positionInVisibleScreen = 0
+            val child = getChildAt(positionInVisibleScreen)
+            val holder = child.tag as VideoAdapterDelegate.VideoViewHolder
+            thumbnail = holder.thumbnail
+            progressBar = holder.progressBar
+            volumeControl = holder.volumeControl
+            viewHolderParent = holder.itemView
+            frameLayout = holder.frameLayout
+
+            //Handling onClick Event in the video item
+            // Click on the Title or description of the video to toggle volume
+            viewHolderParent?.setOnClickListener {
+                toggleVolume()
+            }
+
+            //Setting the new video
+            val video = listItems[targetPosition] as Video
+            val url = video.url
+            val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "AppName"))
+            val videoSource: MediaSource = ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url))
+            videoPlayer.prepare(videoSource)
+
+            //If video was played previously, start playing from that seekPosition
+            val storedSeekPosition = video.seekPosition
+            if (storedSeekPosition != null) {
+                videoPlayer.seekTo(storedSeekPosition)
+            }
+
+            playerView.player = videoPlayer
+            //This will not immediately playing video, it will play when the videoPlayer fetches a portion of the video and
+            //when it's ready to play.
+            videoPlayer.playWhenReady = true
+
+            //Showing circular progressbar until player is ready to play.
+            // "onPlayerStateChanged" handles the actions after the videoPlayer is being ready
+            progressBar?.visibility = View.VISIBLE
+
+            //saving index of last played video
+            lastPlayedVideoIndex = targetPosition
         }
     }
+
 
     // Remove the old player
     private fun removeVideoView(playerView: PlayerView) {
@@ -282,6 +246,7 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
         }
     }
 
+    //Adding a Player view on the Frame Layout
     private fun addVideoView() {
         frameLayout?.addView(playerView)
         isVideoViewAdded = true
@@ -292,15 +257,8 @@ class VideoPlayerRecyclerView(context: Context, attrs: AttributeSet?) : Recycler
     }
 
     private fun saveVideoSeekPosition(index: Int) {
-        videos[index].seekPosition = videoPlayer.currentPosition
-    }
-
-    private fun resetVideoView() {
-        if (isVideoViewAdded) {
-            removeVideoView(playerView)
-            playPosition = -1
-            playerView.visibility = INVISIBLE
-            thumbnail?.visibility = VISIBLE
+        if (listItems[index] is Video) {
+            (listItems[index] as Video).seekPosition = videoPlayer.currentPosition
         }
     }
 

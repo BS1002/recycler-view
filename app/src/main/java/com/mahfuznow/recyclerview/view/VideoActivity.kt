@@ -4,7 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahfuznow.recyclerview.R
-import com.mahfuznow.recyclerview.adapter.VideoListAdapter
+import com.mahfuznow.recyclerview.adapter.VideoAndAdListAdapterDelegate
+import com.mahfuznow.recyclerview.model.Ad
 import com.mahfuznow.recyclerview.model.Video
 
 class VideoActivity : AppCompatActivity() {
@@ -16,10 +17,15 @@ class VideoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_video)
 
         val videoList: List<Video> = getDummyVideoList()
-        val adapter = VideoListAdapter(this, videoList)
+        val adList: List<Ad> = getDummyAdList()
+        val mergedList: ArrayList<Any> = mergeList(videoList, adList)
+        mergedList.shuffle()
+
+        val adapter = VideoAndAdListAdapterDelegate()
+        adapter.items = mergedList
 
         videoPlayerRecyclerView = findViewById(R.id.recyclerView)
-        videoPlayerRecyclerView.setVideoList(videoList) // This is important
+        videoPlayerRecyclerView.setListItems(mergedList) // This is important
         videoPlayerRecyclerView.setHasFixedSize(true)
         videoPlayerRecyclerView.layoutManager = LinearLayoutManager(this)
         videoPlayerRecyclerView.adapter = adapter
@@ -73,5 +79,38 @@ class VideoActivity : AppCompatActivity() {
                 "Description for media object #5"
             ),
         )
+    }
+
+    private fun getDummyAdList(): List<Ad> {
+        return arrayListOf(
+            Ad(
+                "19739203283332",
+                "app-23498502349",
+                "Admob",
+                "Ad tittle 01",
+                "Ad description 01"
+            ),
+            Ad(
+                "348500504955850",
+                "app-39448494949",
+                "Facebook",
+                "Ad tittle 02",
+                "Ad description 02"
+            ),
+            Ad(
+                "854646295631349",
+                "app-94846463464",
+                "Unity",
+                "Ad tittle 03",
+                "Ad description 03"
+            ),
+        )
+    }
+
+    private fun mergeList(videoList: List<Video>, adList: List<Ad>): java.util.ArrayList<Any> {
+        val mergedList: ArrayList<Any> = ArrayList()
+        mergedList.addAll(videoList)
+        mergedList.addAll(adList)
+        return mergedList
     }
 }
